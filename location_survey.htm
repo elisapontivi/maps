@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Survey</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location Survey</h1>
+    <form action= "http://localhost/save_location.php" method="post">
+        <input type="text" id="search" name="location" placeholder="Search for your municipality" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            const mapCenter = { lat: 41.8719, lng: 12.5674 }; // Center the map on Rome, Italy by default
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: mapCenter,
+                zoom: 6
+            });
+
+            const input = document.getElementById("search");
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo("bounds", map);
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.error("No location found for input:", input.value);
+                    return;
+                }
+
+                map.setCenter(place.geometry.location);
+                new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map
+                });
+            });
+        }
+    </script>
+
+    <!-- Load the Google Maps JavaScript API with Places Library -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-5Rc5Bmn-LBSjNS6hb4GEFFd58lvLQXQ&libraries=places&callback=initMap" async defer></script>
+</body>
+</html>
